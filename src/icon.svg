@@ -1,0 +1,29 @@
+<svg width="512" height="512" viewBox="0 0 680 680" role="img" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="gWhite" x1="0%" y1="20%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#888888;stop-opacity:1"/>
+    </linearGradient>
+    <linearGradient id="gBorder" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.25"/>
+      <stop offset="100%" style="stop-color:#ffffff;stop-opacity:0.05"/>
+    </linearGradient>
+  </defs>
+  <rect width="680" height="680" fill="#0a0a0f"/>
+  <circle cx="340" cy="340" r="290" fill="none" stroke="url(#gBorder)" stroke-width="1.5"/>
+  <circle cx="340" cy="340" r="250" fill="#ffffff" fill-opacity="0.03"/>
+  <circle cx="340" cy="90" r="3" fill="#ffffff" opacity="0.3"/>
+  <circle cx="590" cy="340" r="3" fill="#ffffff" opacity="0.3"/>
+  <circle cx="340" cy="590" r="3" fill="#ffffff" opacity="0.3"/>
+  <circle cx="90" cy="340" r="3" fill="#ffffff" opacity="0.3"/>
+  <line x1="340" y1="130" x2="340" y2="168" stroke="#ffffff" stroke-width="1" opacity="0.2"/>
+  <line x1="340" y1="512" x2="340" y2="550" stroke="#ffffff" stroke-width="1" opacity="0.2"/>
+  <line x1="130" y1="340" x2="168" y2="340" stroke="#ffffff" stroke-width="1" opacity="0.2"/>
+  <line x1="512" y1="340" x2="550" y2="340" stroke="#ffffff" stroke-width="1" opacity="0.2"/>
+  <path d="M 232 242 C 232 197, 272 172, 322 172 L 402 172 C 442 172, 462 187, 462 212 C 462 237, 442 257, 402 262 L 292 277 C 242 284, 222 310, 222 342 C 222 374, 242 400, 292 407 L 392 422 C 442 427, 462 447, 462 472 C 462 497, 442 512, 402 512 L 302 512 C 262 512, 232 492, 227 457"
+  fill="none" stroke="url(#gWhite)" stroke-width="44" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M 232 242 C 232 197, 272 172, 322 172 L 402 172 C 442 172, 462 187, 462 212 C 462 237, 442 257, 402 262 L 292 277 C 242 284, 222 310, 222 342 C 222 374, 242 400, 292 407 L 392 422 C 442 427, 462 447, 462 472 C 462 497, 442 512, 402 512 L 302 512 C 262 512, 232 492, 227 457"
+  fill="none" stroke="#0a0a0f" stroke-width="24" stroke-linecap="round" stroke-linejoin="round" opacity="0.55"/>
+  <text x="340" y="618" text-anchor="middle" font-family="monospace" font-size="26" font-weight="700" letter-spacing="10" fill="#ffffff" opacity="0.7">SUBSINK</text>
+  <line x1="250" y1="632" x2="430" y2="632" stroke="#ffffff" stroke-width="0.8" opacity="0.15"/>
+</svg>
