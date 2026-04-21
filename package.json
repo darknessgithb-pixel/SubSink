@@ -1,0 +1,48 @@
+{
+  "name": "subsink",
+  "version": "1.0.0",
+  "description": "Controla tus suscripciones — app de escritorio",
+  "main": "main.js",
+  "author": "Tu Nombre",
+  "license": "MIT",
+  "scripts": {
+    "start":        "electron .",
+    "build:linux":  "electron-builder --linux",
+    "build:win":    "electron-builder --win",
+    "build:mac":    "electron-builder --mac",
+    "build:all":    "electron-builder --linux --win"
+  },
+  "devDependencies": {
+    "electron":         "^30.0.0",
+    "electron-builder": "^24.0.0"
+  },
+  "build": {
+    "appId": "com.tuusuario.subsink",
+    "productName": "SubSink",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "src/**"
+    ],
+    "linux": {
+      "target": ["AppImage", "deb"],
+      "category": "Finance"
+    },
+    "win": {
+      "target": ["nsis"],
+      "icon": "src/icon.ico"
+    },
+    "mac": {
+      "target": ["dmg"],
+      "icon": "src/icon.icns",
+      "category": "public.app-category.finance"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  }
+}
