@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "description": "Controla tus suscripciones — app de escritorio",
   "main": "main.js",
-  "author": "Tu Nombre",
+  "author": {
+  "name": "darknessgithb-pixel",
+  "email": "darkness.githb@gmail.com"
+  },
   "license": "MIT",
   "scripts": {
     "start":        "electron .",
