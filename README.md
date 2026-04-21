@@ -20,7 +20,10 @@
 > Próximamente en la sección [Releases](../../releases)
 
 ---
-
+## Abrir en web
+> Puedes acceder a SubSink desde la web:
+  https://darknessgithb-pixel.github.io/SubSink/
+---
 ## 🛠️ Ejecutar desde el código fuente
 
 ### Requisitos
