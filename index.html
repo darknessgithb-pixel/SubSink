@@ -6,6 +6,7 @@
 <title>SubSink — Controla tus suscripciones</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
@@ -244,9 +245,33 @@ select option { background:var(--bg); }
 </head>
 <body>
 
+<!-- LOGIN SCREEN -->
+<div id="loginScreen" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;">
+  <div style="max-width:340px;width:100%;text-align:center;">
+    <div style="font-family:var(--mono);font-size:2rem;font-weight:700;color:var(--accent);margin-bottom:6px;">Sub<span style="color:var(--muted)">Sink</span></div>
+    <p style="font-family:var(--mono);font-size:.7rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:48px;">Sincroniza tus suscripciones</p>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <button onclick="loginWith('github')" class="btn btn-primary btn-block" style="padding:14px;font-size:.82rem;gap:10px;">
+        <span style="font-size:1.1rem">🐙</span> Continuar con GitHub
+      </button>
+      <button onclick="loginWith('google')" class="btn btn-ghost btn-block" style="padding:14px;font-size:.82rem;gap:10px;border-color:var(--border);">
+        <span style="font-size:1.1rem">🔵</span> Continuar con Google
+      </button>
+    </div>
+    <p style="font-family:var(--mono);font-size:.62rem;color:var(--muted);margin-top:28px;line-height:1.6;">Tus datos se sincronizan entre todos tus dispositivos.<br>Sin publicidad, sin vender datos.</p>
+  </div>
+</div>
+
 <header>
   <div class="logo">Sub<span>Sink</span></div>
-  <div class="page-title" id="headerTitle">inicio</div>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <div class="page-title" id="headerTitle">inicio</div>
+    <div id="syncIndicator" style="font-family:var(--mono);font-size:.58rem;color:var(--muted);display:none;align-items:center;gap:4px;">
+      <span id="syncDot" style="width:6px;height:6px;border-radius:50%;background:var(--accent);display:inline-block;"></span>
+      <span id="syncText">sync</span>
+    </div>
+    <button id="logoutBtn" onclick="logout()" style="display:none;font-family:var(--mono);font-size:.58rem;color:var(--muted);background:none;border:1px solid var(--border);border-radius:6px;padding:4px 8px;cursor:pointer;letter-spacing:.06em;text-transform:uppercase;" title="Cerrar sesión">salir</button>
+  </div>
 </header>
 
 <!-- PAGE 1: INICIO -->
@@ -579,10 +604,16 @@ function getSelectedStatus(){
   return document.getElementById('statusSleeping').classList.contains('active')?'sleeping':'active';
 }
 
-let subs    = JSON.parse(localStorage.getItem('ss_subs')||'[]');
-let profile = JSON.parse(localStorage.getItem('ss_profile')||JSON.stringify({name:'',currency:'€',country:'',since:new Date().toISOString()}));
-let budget  = parseFloat(localStorage.getItem('ss_budget')||'0');
+let subs    = [];
+let profile = {name:'',currency:'€',country:'',since:new Date().toISOString()};
+let budget  = 0;
 let currentFilter='all', currentSort='name', sortAsc=true, currentPage='Inicio';
+let currentUser = null;
+
+// ── SUPABASE ──
+const SUPABASE_URL = 'https://uvcigxmzacnlgdbysfzp.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV2Y2lneG16YWNubGdkYnlzZnpwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY4NDIzNDIsImV4cCI6MjA5MjQxODM0Mn0.Ip-UqAj8slP3iBx9KMnJt9ZddHsehna8pzcJXtB8T1w';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const cur=()=>profile.currency||'€';
 const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -590,8 +621,67 @@ const emj=s=>{if(s.icon)return s.icon;const n=s.name.toLowerCase();for(const k i
 const monthly=s=>s.cycle==='annual'?s.price/12:s.price;
 const totalMonthly=()=>subs.reduce((a,s)=>a+monthly(s),0);
 const fmt=v=>`${cur()}${v.toFixed(2)}`;
-const save=()=>localStorage.setItem('ss_subs',JSON.stringify(subs));
-const saveAll=()=>{save();localStorage.setItem('ss_profile',JSON.stringify(profile));localStorage.setItem('ss_budget',budget.toString());};
+
+// ── AUTH ──
+async function loginWith(provider){
+  await sb.auth.signInWithOAuth({
+    provider,
+    options:{ redirectTo: window.location.href }
+  });
+}
+
+async function logout(){
+  await sb.auth.signOut();
+  currentUser=null;
+  subs=[];profile={name:'',currency:'€',country:'',since:new Date().toISOString()};budget=0;
+  showLoginScreen();
+}
+
+function showLoginScreen(){
+  document.getElementById('loginScreen').style.display='flex';
+  document.getElementById('logoutBtn').style.display='none';
+  document.getElementById('syncIndicator').style.display='none';
+}
+
+function showApp(){
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('logoutBtn').style.display='block';
+  document.getElementById('syncIndicator').style.display='flex';
+}
+
+// ── SYNC ──
+async function loadFromSupabase(){
+  const {data,error}=await sb.from('subscriptions').select('*').eq('user_id',currentUser.id).single();
+  if(data){
+    subs=data.subs||[];
+    profile=data.profile||{name:'',currency:'€',country:'',since:new Date().toISOString()};
+    budget=data.budget||0;
+  } else if(error?.code==='PGRST116'){
+    // Primera vez — crea fila vacía
+    await sb.from('subscriptions').insert({user_id:currentUser.id,subs:[],profile,budget:0});
+  }
+}
+
+async function saveToSupabase(){
+  setSyncStatus('saving');
+  const {error}=await sb.from('subscriptions').upsert({
+    user_id:currentUser.id, subs, profile, budget,
+    updated_at:new Date().toISOString()
+  },{onConflict:'user_id'});
+  if(!error) setSyncStatus('saved');
+  else setSyncStatus('error');
+}
+
+function setSyncStatus(s){
+  const dot=document.getElementById('syncDot');
+  const txt=document.getElementById('syncText');
+  if(s==='saving'){dot.style.background='var(--accent3)';txt.textContent='guardando…';}
+  else if(s==='saved'){dot.style.background='var(--accent)';txt.textContent='sincronizado';}
+  else{dot.style.background='var(--accent2)';txt.textContent='error sync';}
+}
+
+const save=()=>saveToSupabase();
+const saveAll=()=>saveToSupabase();
 
 function goTo(page){
   currentPage=page;
@@ -894,7 +984,26 @@ document.addEventListener('keydown',e=>{
   if(e.key==='Escape'){closeModal();closeAddModal();}
 });
 
-render();
+// ── INIT ──
+(async()=>{
+  const {data:{session}}=await sb.auth.getSession();
+  if(session){
+    currentUser=session.user;
+    await loadFromSupabase();
+    showApp();
+    render();renderPerfil();
+  } else {
+    showLoginScreen();
+  }
+  sb.auth.onAuthStateChange(async(event,session)=>{
+    if(session&&!currentUser){
+      currentUser=session.user;
+      await loadFromSupabase();
+      showApp();
+      render();renderPerfil();
+    }
+  });
+})();
 </script>
 </body>
 </html>
