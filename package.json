@@ -1,0 +1,21 @@
+{
+  "name": "subsink",
+  "version": "1.0.0",
+  "description": "Controla tus suscripciones",
+  "main": "index.js",
+  "scripts": {
+    "build": "echo 'Sin build step necesario'",
+    "sync": "npx cap sync",
+    "android": "npx cap open android",
+    "ios": "npx cap open ios"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.0.0",
+    "@capacitor/app": "^6.0.3",
+    "@capacitor/core": "^6.0.0",
+    "@capacitor/ios": "^6.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^6.0.0"
+  }
+}

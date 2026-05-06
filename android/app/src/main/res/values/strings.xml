@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">SubSink</string>
+    <string name="title_activity_main">SubSink</string>
+    <string name="package_name">com.darknessgithb.subsink</string>
+    <string name="custom_url_scheme">com.darknessgithb.subsink</string>
+</resources>
